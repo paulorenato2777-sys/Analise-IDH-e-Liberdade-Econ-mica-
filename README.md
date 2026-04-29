@@ -1,42 +1,40 @@
-# Analise-IDH-e-Liberdade-Econ-mica-
-Análise de Machine Learning (Random Forest e K-Means) para identificar o impacto dos 12 pilares da liberdade econômica no IDH global.
-# 🌍 Análise de Dados: Impacto da Liberdade Econômica no IDH
+# Análise de Machine Learning - Liberdade Econômica x IDH
 
-Este projeto utiliza **Machine Learning** para investigar a relação entre os 12 pilares da liberdade econômica (Heritage Foundation) e o Índice de Desenvolvimento Humano (IDH - ONU). O objetivo é identificar quais características institucionais e econômicas possuem maior peso no desenvolvimento social global.
+## Método Utilizado
+- **Modelo:** Random Forest Regressor
+- **Validação:** Cross-Validation (10 folds)
+- **Pré-processamento:** StandardScaler
+- **Hiperparâmetros:** n_estimators=200, max_features=3, min_samples_split=5
 
-## 🚀 Destaques do Projeto
-*   **Integração de Dados:** Cruzamento automatizado de bases de dados CSV e Excel via Pandas.
-*   **Feature Importance:** Uso do algoritmo **Random Forest** para ranquear as variáveis mais influentes.
-*   **Clustering:** Agrupamento de países em 5 perfis distintos utilizando **K-Means**.
-*   **Automação:** Script configurado para download direto de fontes em nuvem.
+## Resultado Final - Ranking das 12 Características
 
-## 📊 Resultados do Modelo
-O modelo identificou que a **Liberdade de Negócios (Business Freedom)** é o fator preponderante, representando aproximadamente **67%** da importância no impacto sobre o IDH, seguida por Direitos de Propriedade e Liberdade Comercial.
+| Posição | Característica | Importância (%) |
+|---------|----------------|-----------------|
+| 1º | Business Freedom | 26.28% |
+| 2º | Property Rights | 15.49% |
+| 3º | Trade Freedom | 14.09% |
+| 4º | Government Integrity | 12.20% |
+| 5º | Judicial Effectiveness | 7.33% |
+| 6º | Financial Freedom | 6.04% |
+| 7º | Government Spending | 4.95% |
+| 8º | Investment Freedom | 3.54% |
+| 9º | Tax Burden | 3.42% |
+| 10º | Labor Freedom | 2.36% |
+| 11º | Fiscal Health | 2.33% |
+| 12º | Monetary Freedom | 1.97% |
 
+## Principais Achados
 
-| Rank | Variável | Importância |
-| :--- | :--- | :--- |
-| 1º | Business Freedom | 67.57% |
-| 2º | Property Rights | 6.71% |
-| 3º | Trade Freedom | 6.28% |
-| 4º | Government Spending | 3.69% |
+As 5 características da liberdade econômica que mais impactam o IDH são:
 
-## 🛠️ Tecnologias Utilizadas
-*   **Python 3.x**
-*   **Pandas & NumPy:** Manipulação e tratamento de dados.
-*   **Scikit-Learn:** Pré-processamento (`MinMaxScaler`), Clustering (`KMeans`) e Regressão (`RandomForestRegressor`).
-*   **Matplotlib & Seaborn:** Visualização de dados e gráficos de importância.
+1. **Business Freedom (26.28%)** - Liberdade para fazer negócios
+2. **Property Rights (15.49%)** - Direito à propriedade
+3. **Trade Freedom (14.09%)** - Liberdade comercial
+4. **Government Integrity (12.20%)** - Integridade do governo
+5. **Judicial Effectiveness (7.33%)** - Eficiência judicial
 
-## 📂 Como rodar este projeto
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com
-   ```
-2. Instale as dependências:
-   ```bash
-   pip install pandas scikit-learn seaborn matplotlib requests
-   ```
-3. Execute o script Python para gerar os gráficos e o ranking.
+## Conclusão
 
+O modelo demonstra que a liberdade econômica tem relação significativa com o IDH, com destaque para fatores relacionados ao ambiente de negócios, direitos de propriedade e integridade institucional. As 5 principais características concentram aproximadamente 75% da importância total do modelo.
 ---
 **Contato:** [paulorenato2777@gmail.com](mailto:paulorenato2777@gmail.com)
