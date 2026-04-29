@@ -2,16 +2,21 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import gdown
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.cluster import KMeans
+import requests
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import KFold
 
 ID_IDH = '14EgXDCiEaovX4sfHEfLi9HCThsap0r71'
 ID_HERITAGE = '1K6FmTsRaDGd85pw976RZRQlELV-2Rhrf'
 
-gdown.download(f'https://drive.google.com/uc?id={ID_IDH}', 'idh.xlsx', quiet=False)
-gdown.download(f'https://drive.google.com/uc?id={ID_HERITAGE}', 'heritage.csv', quiet=False)
+url_idh = f'https://drive.google.com/uc?export=download&id={ID_IDH}'
+response = requests.get(url_idh, allow_redirects=True)
+open('idh.xlsx', 'wb').write(response.content)
+
+url_heritage = f'https://drive.google.com/uc?export=download&id={ID_HERITAGE}'
+response = requests.get(url_heritage, allow_redirects=True)
+open('heritage.csv', 'wb').write(response.content)
 
 features_12 = [
     'Property Rights', 'Judicial Effectiveness', 'Government Integrity',
@@ -24,28 +29,49 @@ df_idh = pd.read_excel('idh.xlsx', header=5)[['Country', 'Value']].dropna()
 df_idh['Value'] = pd.to_numeric(df_idh['Value'], errors='coerce')
 
 df_econ = pd.read_csv('heritage.csv', skiprows=3, sep=',', engine='python')
-df_econ = df_econ[['Country', 'Overall Score'] + features_12].dropna()
+df_econ = df_econ[['Country'] + features_12].dropna()
 
-for col in features_12 + ['Overall Score']:
+for col in features_12:
     df_econ[col] = pd.to_numeric(df_econ[col], errors='coerce')
 
-df_final = df_econ.merge(df_idh, on="Country", how="inner").dropna()
+df_final = df_econ.merge(df_idh, on='Country', how='inner').dropna()
 
-X = df_final[features_12]
-y = df_final['Value']
-rf = RandomForestRegressor(n_estimators=100, random_state=42)
-rf.fit(X, y)
+X = df_final[features_12].values
+y = df_final['Value'].values
 
-ranking = pd.Series(rf.feature_importances_, index=features_12).sort_values(ascending=False)
+kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
-scaler = MinMaxScaler()
-df_norm = scaler.fit_transform(df_final[features_12 + ['Value']])
-df_final['Cluster'] = KMeans(n_clusters=5, random_state=42, n_init=10).fit_predict(df_norm)
+importancias_total = pd.Series(0, index=features_12)
 
-print("\nRANKING DE IMPORTÂNCIA:")
-print(ranking.map(lambda x: f"{x:.2%}"))
+for train_idx, val_idx in kf.split(X):
+    X_train, X_val = X[train_idx], X[val_idx]
+    y_train, y_val = y[train_idx], y[val_idx]
+    
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    
+    rf = RandomForestRegressor(n_estimators=200, max_features=3, min_samples_split=5, random_state=42, n_jobs=-1)
+    rf.fit(X_train_scaled, y_train)
+    
+    importancias_total += pd.Series(rf.feature_importances_, index=features_12)
 
-plt.figure(figsize=(10,6))
-sns.barplot(x=ranking.values, y=ranking.index, palette='viridis')
-plt.title('Influência das Variáveis Econômicas no IDH')
+importancias_media = importancias_total / 10
+importancias_percent = (importancias_media / importancias_media.sum()) * 100
+ranking = importancias_percent.sort_values(ascending=False)
+
+print("\n" + "="*55)
+print("RANKING DAS 12 CARACTERÍSTICAS (%) - VALIDAÇÃO CRUZADA")
+print("="*55)
+print(ranking.to_string())
+print("="*55)
+
+plt.figure(figsize=(12, 7))
+cores = sns.color_palette('viridis', n_colors=len(ranking))
+bars = plt.barh(ranking.index, ranking.values, color=cores)
+plt.xlabel('Importância Relativa (%)', fontsize=12)
+plt.title('Qual característica da Liberdade Econômica mais impacta o IDH?', fontsize=14)
+plt.gca().invert_yaxis()
+for i, v in enumerate(ranking.values):
+    plt.text(v + 0.5, i, f'{v:.1f}%', va='center', fontsize=10)
+plt.tight_layout()
 plt.show()
