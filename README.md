@@ -30,7 +30,7 @@ As 5 características da liberdade econômica que mais impactam o IDH são:
 1. **Business Freedom (26.28%)** - Liberdade para fazer negócios
 2. **Property Rights (15.49%)** - Direito à propriedade
 3. **Trade Freedom (14.09%)** - Liberdade comercial
-4. **Government Integrity (12.20%)** - Integridade do governo
+4. **Government Integrity (12.20%)** - Integridade do governo 
 5. **Judicial Effectiveness (7.33%)** - Eficiência judicial
 
 ## Conclusão
