@@ -4,58 +4,79 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-# 1. Baixar dados
-print("Baixando dados...")
-url_idh = 'https://drive.google.com/uc?export=download&id=14EgXDCiEaovX4sfHEfLi9HCThsap0r71'
-response = requests.get(url_idh, allow_redirects=True)
-open('idh.xlsx', 'wb').write(response.content)
+#Baixando dados do heritage e DH
+def baixar_dados():
+    
+    url_idh = 'https://drive.google.com/uc?export=download&id=14EgXDCiEaovX4sfHEfLi9HCThsap0r71'
+    r = requests.get(url_idh)
+    with open('idh.xlsx', 'wb') as f:
+        f.write(r.content)
 
-url_heritage = 'https://drive.google.com/uc?export=download&id=1K6FmTsRaDGd85pw976RZRQlELV-2Rhrf'
-response = requests.get(url_heritage, allow_redirects=True)
-open('heritage.csv', 'wb').write(response.content)
-
-#Carregando dados
-df_idh = pd.read_excel('idh.xlsx', header=5)[['Country', 'Value']].dropna()
-df_idh['Value'] = pd.to_numeric(df_idh['Value'], errors='coerce')
-
-colunas = ['Country', 'Property Rights', 'Judicial Effectiveness', 'Government Integrity',
-           'Tax Burden', 'Government Spending', 'Fiscal Health', 'Business Freedom',
-           'Labor Freedom', 'Monetary Freedom', 'Trade Freedom', 'Investment Freedom',
-           'Financial Freedom']
-df_heritage = pd.read_csv('heritage.csv', skiprows=3, engine='python')[colunas].dropna()
-df_final = pd.merge(df_heritage, df_idh, on='Country', how='inner').dropna()
-
-#Preparar dados para os modelos
-X = df_final.drop(columns=['Country', 'Value'])
-y = df_final['Value']
+    url_heritage = 'https://drive.google.com/uc?export=download&id=1K6FmTsRaDGd85pw976RZRQlELV-2Rhrf'
+    r = requests.get(url_heritage)
+    with open('heritage.csv', 'wb') as f:
+        f.write(r.content)
 
 
-#MÉTODO 1: CORRELAÇÃO
+# carregando e limpando os dados
+def carregar_dados():
+    
+    df_idh = pd.read_excel('idh.xlsx', header=5)[['Country', 'Value']].dropna()
+    
+    df_idh['Value'] = pd.to_numeric(df_idh['Value'], errors='coerce')
 
-print("\n" + "="*60)
-print("CORRELAÇÃO COM IDH")
-print("="*60)
-correlacoes = df_final.drop(columns=['Country']).corr()['Value'].drop('Value').sort_values(ascending=False)
-print(correlacoes)
-print("="*60)
+    df_heritage = pd.read_csv('heritage.csv', skiprows=3, engine='python')
+    
+    df_heritage = df_heritage.dropna()
+    
+    df_heritage = df_heritage.drop(columns=['Index Year', 'Overall Score'])
 
-#MÉTODO 2: RANDOM FOREST
+    df_final = pd.merge(df_heritage, df_idh, on='Country', how='inner').dropna()
+    return df_final
 
-print("\n" + "="*60)
-print("IMPORTÂNCIA DAS CARACTERÍSTICAS (RANDOM FOREST)")
-print("="*60)
+#Fazendo a correlação relação entre liberdade econômica e IDH
+def correlacao(df):
+   
+    df_corr = df.drop(columns=['Country']).corr()['Value'].drop('Value').sort_values(ascending=False)
+    return df_corr
 
-#Normalizando
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+# descobrindo as importâncias com Random Forest
+def random_forest(df):
+    X = df.drop(columns=['Country', 'Value'])
+    y = df['Value']
 
-# Dividindo em treino e teste
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
-# Rodar Random Forest
-rf = RandomForestRegressor(n_estimators=100, random_state=42)
-rf.fit(X_train, y_train)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-importancias = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
-print(importancias)
-print("="*60)
+    rf = RandomForestRegressor(n_estimators=100, random_state=42)
+    rf.fit(X_train, y_train)
+    
+    numeros_importancia = rf.feature_importances_
+
+    tabela_importancia = pd.Series(data=numeros_importancia, index=X.columns)
+
+    tabela_ordenada = tabela_importancia.sort_values(ascending=False)
+    
+    return tabela_ordenada
+
+
+#E executando as funções
+def main():
+    baixar_dados()
+    df = carregar_dados()
+    
+    print("\n" + "="*60)
+    print("CORRELAÇÃO COM IDH")
+    print("="*60)
+    print(correlacao(df))
+    print("="*60)
+    
+    print("\n" + "="*60)
+    print("IMPORTÂNCIA DAS CARACTERÍSTICAS (RANDOM FOREST)")
+    print("="*60)
+    print(random_forest(df))
+    print("="*60)
+
+main()
