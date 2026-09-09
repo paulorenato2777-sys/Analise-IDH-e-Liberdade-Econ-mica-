@@ -4,18 +4,23 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-#Baixando dados do heritage e DH
-def baixar_dados():
-    
-    url_idh = 'https://drive.google.com/uc?export=download&id=14EgXDCiEaovX4sfHEfLi9HCThsap0r71'
-    r = requests.get(url_idh)
-    with open('idh.xlsx', 'wb') as f:
-        f.write(r.content)
+#Baixando dados do heritage e IDH
 
-    url_heritage = 'https://drive.google.com/uc?export=download&id=1K6FmTsRaDGd85pw976RZRQlELV-2Rhrf'
-    r = requests.get(url_heritage)
-    with open('heritage.csv', 'wb') as f:
-        f.write(r.content)
+def baixar_dados():
+    try:
+        url_idh = 'https://drive.google.com/uc?export=download&id=14EgXDCiEaovX4sfHEfLi9HCThsap0r71'
+        r = requests.get(url_idh)
+        with open('idh.xlsx', 'wb') as f:
+            f.write(r.content)
+
+        url_heritage = 'https://drive.google.com/uc?export=download&id=1K6FmTsRaDGd85pw976RZRQlELV-2Rhrf'
+        r = requests.get(url_heritage)
+        with open('heritage.csv', 'wb') as f:
+            f.write(r.content)
+            
+    except:
+        print("Erro ao baixar os dados. Verifique a conexão.")
+
 
 
 # carregando e limpando os dados
