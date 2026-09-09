@@ -2,7 +2,7 @@
 
 ## 🎯 Objetivo
 
-Analisar a relação entre as **características da Liberdade Econômica** (índice da Heritage Foundation) e o **Índice de Desenvolvimento Humano (IDH)**, utilizando dois métodos estatísticos para validar os resultados.
+Analisar a relação entre as **características da Liberdade Econômica** (índice da Heritage Foundation) e o **Índice de Desenvolvimento Humano (IDH)**, utilizando dois métodos estatísticos para validar os resultados e **identificar as 3 principais características mais conectadas ao IDH**.
 
 ---
 
@@ -17,6 +17,18 @@ Analisar a relação entre as **características da Liberdade Econômica** (índ
 
 - **Correlação de Pearson**: mede a relação linear entre cada característica e o IDH
 - **Random Forest Regressor**: mede a importância de cada característica na previsão do IDH
+
+---
+
+## 💡 Análise das Principais Características
+
+Para entender os resultados, veja por que essas características impactam tanto o IDH na prática:
+
+* **Liberdade Empresarial (Business Freedom):** Reduz a burocracia para abrir e operar negócios. Isso facilita a criação de empresas, estimula a contratação de funcionários e gera salários mais altos, impactando diretamente a renda e o bem-estar da população.
+* **Direitos de Propriedade (Property Rights):** Garante a segurança jurídica de que o cidadão é dono do que construiu ou comprou. Sem medo de expropriação, as pessoas e empresas investem mais no longo prazo em saúde, educação e infraestrutura.
+* **Integridade Governamental (Government Integrity - Forte na Correlação):** Menos corrupção significa que o dinheiro dos impostos é melhor investido em serviços públicos essenciais que compõem o IDH, como saúde e educação básica.
+* **Liberdade Comercial (Trade Freedom - Forte no Random Forest):** O acesso a mercados globais barateia o custo de vida e permite que o país importe tecnologias e medicamentos, elevando o padrão de desenvolvimento humano.
+
 
 ---
 
