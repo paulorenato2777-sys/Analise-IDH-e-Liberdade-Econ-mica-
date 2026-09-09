@@ -15,7 +15,7 @@ Analisar a relação entre as **características da Liberdade Econômica** (índ
 
 ## 🛠️ Métodos Utilizados
 
-- **Correlação de Pearson**: mede a relação linear entre cada característica e o IDH
+- **Correlação**: mede a relação linear entre cada característica e o IDH
 - **Random Forest Regressor**: mede a importância de cada característica na previsão do IDH
 
 ---
